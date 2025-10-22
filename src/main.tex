@@ -1,112 +1,52 @@
 %======================================================================
 % Livro: Introdução à Assimilação de Dados
-% Arquivo principal
-% Compilação: pdflatex -> biber -> pdflatex -> pdflatex
+% Autor: João Gerd Zell de Mattos
+% Arquivo principal (main.tex)
+%
+% Compilação recomendada:
+%   latexmk -pdf -interaction=nonstopmode main.tex
+%
+% Estrutura recomendada:
+%   src/
+%     ├── preamble.tex
+%     ├── glossary.tex
+%     ├── bib/references.bib
+%     ├── chapters/ch01.tex ... ch11.tex
 %======================================================================
+
 \documentclass[12pt,a4paper,oneside]{book}
 
-%----------------------------- Pacotes --------------------------------
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[brazil]{babel}
-\usepackage{lmodern}
-\usepackage{microtype}
-\usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage{setspace}
-\usepackage{graphicx}
-\usepackage{caption}
-\usepackage{subcaption}
-\usepackage{booktabs}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{xcolor}
-\usepackage{csquotes}
-\usepackage{hyperref}
-\usepackage{bookmark}
-\usepackage{fancyhdr}
-\usepackage{titlesec}
-\usepackage{epigraph}
-\usepackage[acronym,toc]{glossaries}
-\usepackage{makeidx}
-\usepackage{enumitem}
-\usepackage{siunitx}
-\usepackage{mathtools}
-\usepackage{physics}
-\usepackage{tcolorbox}
+%----------------------------------------------------------------------
+% Importa o preâmbulo unificado (pacotes, cores, estilos, comandos AD)
+%----------------------------------------------------------------------
+\input{preamble}
 
+%----------------------------------------------------------------------
+% Bibliografia e glossário (carregados após o preâmbulo)
+%----------------------------------------------------------------------
+\addbibresource{bib/references.bib} % Caminho relativo
+\makeglossaries
+\input{glossary}
 
-% TikZ / PGFPlots para figuras 100% LaTeX
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,calc}
-\usetikzlibrary{arrows.meta, calc, shapes.geometric, shadows, fadings, decorations.pathmorphing}
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.18}
-% importa a macro arcarrow
-\input{fig/arcarrow.tex}
-
-% Bibliografia
-\usepackage[backend=biber,style=authoryear,maxbibnames=10,uniquename=false,natbib=true]{biblatex}
-\addbibresource{references.bib}
-
-
-%------------------------ Metadados do documento -----------------------
-\title{Introdução à Assimilação de Dados}
+%----------------------------------------------------------------------
+% Informações do documento
+%----------------------------------------------------------------------
+\title{Introdução à Assimilação de Dados\\
+\large Fundamentos, prática e perspectivas}
 \author{João Gerd Zell de Mattos}
 \date{\today}
 
-%------------------------ Aparência e estilos -------------------------
-\onehalfspacing
-\definecolor{brandA}{HTML}{0B5FA5} % azul
-\definecolor{brandB}{HTML}{F28C28} % laranja
-\definecolor{ink}{HTML}{1F2937}     % cinza escuro
+%======================================================================
+\begin{document}
+%======================================================================
 
-\hypersetup{
-  colorlinks=true,
-  linkcolor=brandA,
-  citecolor=brandB,
-  urlcolor=brandA,
-  pdftitle={Introdução à Assimilação de Dados},
-  pdfauthor={João Gerd Zell de Mattos},
-  pdfsubject={Assimilação de Dados},
-  pdfkeywords={assimilação de dados, análise objetiva, filtros, Kalman, VAR, EnKF, EnVar}
-}
-
-\pagestyle{fancy}
-\fancyhf{}
-\lhead{\leftmark}
-\rfoot{\thepage}
-
-% Estilo de títulos
-\titleformat{\chapter}[display]
-  {\bfseries\Huge\color{ink}}
-  {\filright\Large\color{brandB}\thechapter}
-  {1ex}
-  {\titlerule[0.8pt]\vspace{1ex}\filright}
-  [\vspace{1ex}\titlerule]
-
-\titleformat{\section}
-  {\bfseries\Large\color{ink}}{\thesection}{0.8em}{}
-
-% Epígrafe
-\setlength{\epigraphwidth}{0.7\textwidth}
-\setlength{\epigraphrule}{0pt}
-
-% Glossário e índice
-\makeglossaries
-\newacronym{ad}{AD}{Assimilação de Dados}
-\newacronym{obana}{OBAN}{Análise Objetiva}
-\newacronym{enkf}{EnKF}{Ensemble Kalman Filter}
-\newacronym{var}{VAR}{Método Variacional}
-\newacronym{gsi}{GSI}{Gridpoint Statistical Interpolation}
-\newacronym{jedi}{JEDI}{Joint Effort for Data Assimilation Integration}
-\newacronym{letkf}{LETKF}{Local Ensemble Transform Kalman Filter}
-\makeindex
-
-%------------------------------ Capa ----------------------------------
-\newcommand{\CustomTitlePage}{
+%----------------------------------------------------------------------
+% Capa personalizada
+%----------------------------------------------------------------------
 \begin{titlepage}
   \centering
   \vspace*{1cm}
-  \fcolorbox{white}{brandA}{%
+  \fcolorbox{white}{primary}{%
     \begin{minipage}{0.95\linewidth}
       \vspace*{1.6cm}
       \centering
@@ -117,21 +57,20 @@
     \end{minipage}
   }
   \vfill
-  {\Large\color{ink} \textbf{João Gerd Zell de Mattos}\par}
+  {\Large\color{textgray} \textbf{João Gerd Zell de Mattos}\par}
   \vspace{0.25cm}
-  {\large\color{ink} \today\par}
+  {\large\color{textgray} \today\par}
   \vspace{1.5cm}
   \begin{center}
     \rule{0.35\linewidth}{0.6pt}\par
     \vspace{0.2cm}
-    {\small\color{ink} (rascunho / edição do autor)}
+    {\small\color{textgray} (rascunho / edição do autor)}
   \end{center}
 \end{titlepage}
-}
 
-%======================================================================
-\begin{document}
-\CustomTitlePage
+%----------------------------------------------------------------------
+% Parte inicial (não numerada)
+%----------------------------------------------------------------------
 \frontmatter
 
 %---------------------------- Dedicatória -----------------------------
@@ -160,14 +99,16 @@ Este livro introduz a \gls{ad} a partir de uma trajetória intuitiva: da interpo
 % Sumário
 \tableofcontents
 
+%======================================================================
 \mainmatter
+%======================================================================
 
 %======================================================================
 % PARTE I — O CAMINHO ATÉ A ASSIMILAÇÃO DE DADOS
 %======================================================================
 \part{O caminho até a assimilação de dados}
 
-\include{capitulos/ch01} % Cap. 1 — A arte de combinar informações
+\include{chapters/ch01} % Cap. 1 — A arte de combinar informações
 \include{chapters/ch02} % Cap. 2 — Interpolação: o ponto de partida
 \include{chapters/ch03} % Cap. 3 — Ajuste por mínimos quadrados
 \include{chapters/ch04} % Cap. 4 — Ajustes em 2D e suavização
@@ -186,19 +127,26 @@ Este livro introduz a \gls{ad} a partir de uma trajetória intuitiva: da interpo
 \include{chapters/ch11} % Cap. 11 — Futuro da AD: IA, acoplado, trópicos, sensores
 
 %======================================================================
-% Materiais de apoio
+% Parte final — Materiais de apoio
 %======================================================================
 \backmatter
 
+% Listas de siglas e glossário
 \printglossary[type=\acronymtype,title={Lista de Siglas}]
 \printglossary[title={Glossário}]
 
+% Referências bibliográficas
 \printbibliography[title={Referências}]
 
+% Índice remissivo
 \printindex
 
+% Apêndices
 \appendix
 \chapter{Apêndice A: Notação e símbolos}
 \chapter{Apêndice B: Exercícios comentados}
 
+%======================================================================
 \end{document}
+%======================================================================
+

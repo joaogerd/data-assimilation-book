@@ -1,0 +1,241 @@
+%========================================
+% preamble.tex — Preâmbulo unificado
+% Livro: Introdução à Assimilação de Dados
+% Autor: João Gerd Zell de Mattos
+%========================================
+
+%----------------------------
+% Codificação, língua, fonte
+%----------------------------
+\usepackage[utf8]{inputenc}   % entrada UTF-8
+\usepackage[T1]{fontenc}      % saída com acentuação correta
+\usepackage[brazil]{babel}    % hifenização/nomes em pt-BR
+\usepackage{lmodern}          % fonte Latin Modern
+\usepackage{microtype}        % microtipografia (melhora a legibilidade)
+
+%----------------------------
+% Página e tipografia
+%----------------------------
+\usepackage{geometry}         % margens e formato de página
+\geometry{a4paper, margin=2.5cm}
+\usepackage{setspace}         % espaçamento entre linhas
+\onehalfspacing
+\usepackage{parskip}          % parágrafo com espaço em vez de indentação
+
+%----------------------------
+% Cores e hyperlinks
+%----------------------------
+\usepackage{xcolor}                     % cores
+% Paleta discreta
+\definecolor{primary}{RGB}{20, 92, 160}     % azul científico
+\definecolor{secondary}{RGB}{0, 134, 114}   % verde água
+\definecolor{accent}{RGB}{180, 60, 60}      % vermelho suave
+\definecolor{textgray}{gray}{0.15}
+\color{textgray}
+
+\usepackage{hyperref}                   % hyperlinks no PDF
+\hypersetup{
+  colorlinks=true,
+  linkcolor=primary,
+  citecolor=secondary,
+  urlcolor=primary,
+  pdfauthor={João Gerd Zell de Mattos},
+  pdftitle={Introdução à Assimilação de Dados},
+  pdfcreator={LaTeX},
+  pdfsubject={Assimilação de Dados},
+  pdfkeywords={assimilação de dados, var, enkf, híbrido, previsão numérica}
+}
+\usepackage{bookmark}                   % melhora marcadores do PDF (carregar DEPOIS de hyperref)
+
+% cotações tipográficas — recomendado quando usar biblatex/estilo autor-ano
+\usepackage{csquotes}
+
+%----------------------------
+% Matemática e SI
+%----------------------------
+\usepackage{amsmath,amssymb,mathtools} % matemática base
+\usepackage{bm}                        % negrito em símbolos (vetores/matrizes)
+\usepackage{physics}                   % notação conveniente (derivadas, etc.)
+\usepackage{siunitx}                   % unidades SI e números
+\sisetup{
+  detect-all,
+  per-mode=symbol,
+  separate-uncertainty=true,
+  exponent-product=\cdot,
+  output-decimal-marker={,}  % pt-BR
+}
+
+% Operadores úteis
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+%----------------------------
+% Figuras, tabelas, legendas
+%----------------------------
+\usepackage{graphicx}       % inclusão de figuras
+\usepackage{booktabs}       % tabelas bonitas (\toprule, \midrule, \bottomrule)
+\usepackage{caption}        % personalização de legendas
+\usepackage{subcaption}     % subfiguras
+\captionsetup{labelfont=bf}
+
+%----------------------------
+% TikZ / PGFPlots (figuras 100% LaTeX)
+%----------------------------
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows.meta,positioning,calc,fit,
+  decorations.pathmorphing,
+  shapes.geometric,
+  shadows, fadings
+}
+\tikzset{
+  >={Stealth[length=2.0mm]},
+  box/.style   ={draw, rounded corners=4pt, inner sep=6pt, thick, fill=primary!5},
+  flow/.style  ={->, thick},
+  circ/.style  ={draw, circle, minimum size=9mm, thick, fill=secondary!10},
+  note/.style  ={draw, rounded corners=3pt, inner sep=5pt, dashed, color=secondary},
+}
+
+\usepackage{pgfplots}       % gráficos de dados
+\pgfplotsset{compat=1.18}   % define compatibilidade estável do pgfplots
+
+% (Opcional) macros próprias para setas em arco — carregar somente se for usado globalmente
+\input{figures/arcarrow.tex}
+
+%----------------------------
+% Glossário e índice
+%----------------------------
+\usepackage[acronym,shortcuts,toc]{glossaries} % acrônimos + entrada no sumário
+% Observação: \makeglossaries e \input{glossary} ficam no main.tex
+\usepackage{makeidx}        % índice remissivo (\makeindex no main.tex)
+
+%----------------------------
+% Bibliografia (biblatex)
+%----------------------------
+% Mantém o carregamento aqui; o \addbibresource{...} fica no main.tex.
+\usepackage[backend=biber,style=authoryear,maxbibnames=10,uniquename=false,natbib=true]{biblatex}
+
+%----------------------------
+% Estilo de títulos / epígrafe / listas
+%----------------------------
+\usepackage{titlesec}       % personalização de títulos (\chapter, \section, ...)
+\usepackage{epigraph}       % epígrafes elegantes no início de capítulos
+\setlength{\epigraphwidth}{0.7\textwidth}
+\setlength{\epigraphrule}{0pt}
+
+\usepackage{enumitem}       % listas com controle de espaçamento/labels
+\setlist{itemsep=2pt, topsep=4pt}
+
+%----------------------------
+% Referências “inteligentes”
+%----------------------------
+\usepackage[nameinlink,noabbrev]{cleveref}
+% Uso: \cref{fig:exemplo}, \Cref{eq:custo}, etc.
+
+%----------------------------
+% Listagens de código
+%----------------------------
+\usepackage{listings}
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=6pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!20},
+  keywordstyle=\color{primary}\bfseries,
+  commentstyle=\color{secondary!80!black}\itshape,
+  stringstyle=\color{accent!90!black},
+  tabsize=2
+}
+\lstset{style=code}
+
+%----------------------------
+% Caixas de destaque
+%----------------------------
+\usepackage[most]{tcolorbox}
+\tcbset{enhanced, sharp corners=downhill, boxsep=3pt, arc=2pt}
+\newtcolorbox{destaque}[1][]{
+  colback=primary!3, colframe=primary!60!black, title={Destaque}, fonttitle=\bfseries, #1}
+\newtcolorbox{nota}[1][]{
+  colback=secondary!3, colframe=secondary!60!black, title={Nota}, fonttitle=\bfseries, #1}
+\newtcolorbox{alerta}[1][]{
+  colback=accent!5, colframe=accent!80!black, title={Atenção}, fonttitle=\bfseries, #1}
+\newtcolorbox{exemplo}[1][]{
+  colback=black!2, colframe=black!40, title={Exemplo}, fonttitle=\bfseries, #1}
+
+%----------------------------
+% Teoremas e afins (pt-BR)
+%----------------------------
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{teorema}{Teorema}[chapter]
+\newtheorem{proposicao}[teorema]{Proposição}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{definition}
+\newtheorem{definicao}[teorema]{Definição}
+\newtheorem{exercicio}[teorema]{Exercício}
+\theoremstyle{remark}
+\newtheorem{observacao}[teorema]{Observação}
+
+%----------------------------
+% Cabeçalho/Rodapé
+%----------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%----------------------------
+% Toggle rascunho/final
+%----------------------------
+\newif\ifdraft
+\draftfalse % mude para \drafttrue durante a escrita (marcações úteis abaixo)
+
+\ifdraft
+  \usepackage[inline]{showlabels} % mostra labels ao lado (debug)
+  \renewcommand{\baselinestretch}{1.2}
+\fi
+
+%----------------------------
+% Comandos úteis p/ Assimilação de Dados
+%----------------------------
+% Vetores e matrizes (em negrito)
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\mat}[1]{\bm{#1}}
+
+% Estados e observações
+\newcommand{\xb}{\vect{x}_b}     % background
+\newcommand{\xa}{\vect{x}_a}     % análise
+\newcommand{\xo}{\vect{x}}       % estado genérico
+\newcommand{\yobs}{\vect{y}}     % observações
+
+% Operadores e matrizes
+\newcommand{\Hop}{\mat{H}}       % operador de observação
+\newcommand{\Kmat}{\mat{K}}      % ganho de Kalman
+\newcommand{\Bmat}{\mat{B}}      % covariância de background
+\newcommand{\Rmat}{\mat{R}}      % covariância de observação
+\newcommand{\Pmat}{\mat{P}}      % genérica (Ex.: erro de previsão)
+\newcommand{\J}{\mathcal{J}}     % função custo
+\newcommand{\grad}{\nabla}       % gradiente
+\newcommand{\T}{^{\mathsf T}}    % transposta
+
+% Variação incremental (x' etc.)
+\newcommand{\dx}{\delta \vect{x}}
+\newcommand{\dy}{\delta \vect{y}}
+
+% Conveniências
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+
+% Numeração por capítulo
+\numberwithin{equation}{chapter}
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
+

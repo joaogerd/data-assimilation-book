@@ -1,0 +1,113 @@
+%======================================================================
+% Arquivo: glossary.tex
+% Livro: Introdução à Assimilação de Dados
+% Autor: João Gerd Zell de Mattos
+%
+% Descrição:
+%   Contém todas as siglas, abreviações, símbolos e termos do livro.
+%   Deve ser incluído após o comando \makeglossaries no main.tex.
+%======================================================================
+
+%----------------------------------------------------------------------
+% SIGLAS E ABREVIATURAS
+%----------------------------------------------------------------------
+\newacronym{ad}{AD}{Assimilação de Dados}
+\newacronym{obana}{OBAN}{Análise Objetiva}
+\newacronym{var}{VAR}{Método Variacional}
+\newacronym{3dvar}{3DVar}{Three-Dimensional Variational Method}
+\newacronym{4dvar}{4DVar}{Four-Dimensional Variational Method}
+\newacronym{enkf}{EnKF}{Ensemble Kalman Filter}
+\newacronym{letkf}{LETKF}{Local Ensemble Transform Kalman Filter}
+\newacronym{enkf-mean}{EnKF-Mean}{Filtro de Kalman de Conjunto com Atualização do Estado Médio}
+\newacronym{enkf-pert}{EnKF-Pert}{Filtro de Kalman de Conjunto com Atualização das Perturbações}
+\newacronym{envar}{EnVar}{Método Híbrido Ensemble-Variacional}
+\newacronym{bmat}{\textbf{B}}{Matriz de Covariância de Erro de Background}
+\newacronym{rmat}{\textbf{R}}{Matriz de Covariância de Erro de Observação}
+\newacronym{hmat}{\textbf{H}}{Operador de Observação Linearizado}
+\newacronym{kmat}{\textbf{K}}{Ganho de Kalman}
+\newacronym{jcost}{\textit{J}}{Função Custo da Assimilação}
+\newacronym{bam}{BAM}{Brazilian Atmospheric Model}
+\newacronym{gsi}{GSI}{Gridpoint Statistical Interpolation}
+\newacronym{jedi}{JEDI}{Joint Effort for Data Assimilation Integration}
+\newacronym{monan}{MONAN}{Modelo para Previsão dos Oceanos, Superfícies Terrestres e Atmosfera}
+\newacronym{cptec}{CPTEC}{Centro de Previsão de Tempo e Estudos Climáticos}
+\newacronym{inpe}{INPE}{Instituto Nacional de Pesquisas Espaciais}
+\newacronym{ncep}{NCEP}{National Centers for Environmental Prediction}
+\newacronym{ncar}{NCAR}{National Center for Atmospheric Research}
+\newacronym{ucan}{UCAN}{Unified Community for Assimilation and Nowcasting}
+\newacronym{satobs}{SATOBS}{Observações de Satélite}
+\newacronym{convobs}{CONVOBS}{Observações Convencionais}
+\newacronym{obsproc}{OBSPROC}{Pré-processamento de Observações}
+\newacronym{enkfens}{Ens}{Ensemble (Conjunto de Membros)}
+\newacronym{varbc}{VarBC}{Bias Correction Variacional}
+
+%----------------------------------------------------------------------
+% SÍMBOLOS E NOTAÇÃO
+%----------------------------------------------------------------------
+\newglossaryentry{state-vector}{
+  name={\ensuremath{\vect{x}}},
+  description={Vetor de estado do modelo, contendo as variáveis prognósticas a serem atualizadas pela assimilação.}
+}
+
+\newglossaryentry{obs-vector}{
+  name={\ensuremath{\vect{y}}},
+  description={Vetor de observações, representando os dados medidos ou inferidos do sistema terrestre.}
+}
+
+\newglossaryentry{b-matrix}{
+  name={\ensuremath{\mat{B}}},
+  description={Matriz de covariância de erro de background, que representa incertezas associadas à previsão de primeira estimativa.}
+}
+
+\newglossaryentry{r-matrix}{
+  name={\ensuremath{\mat{R}}},
+  description={Matriz de covariância de erro de observação, descrevendo as incertezas instrumentais e representativas.}
+}
+
+\newglossaryentry{gain-matrix}{
+  name={\ensuremath{\mat{K}}},
+  description={Matriz de ganho de Kalman, responsável por ponderar a influência das observações na atualização do estado.}
+}
+
+\newglossaryentry{cost-function}{
+  name={\ensuremath{\mathcal{J}}},
+  description={Função custo que mede o desvio entre o estado analisado e o background e entre as observações e suas estimativas.}
+}
+
+\newglossaryentry{h-operator}{
+  name={\ensuremath{\mat{H}}},
+  description={Operador de observação (ou seu linearizado), que transforma o espaço do modelo no espaço das observações.}
+}
+
+%----------------------------------------------------------------------
+% TERMOS CONCEITUAIS (exemplo de glossário descritivo)
+%----------------------------------------------------------------------
+\newglossaryentry{analise}{
+  name={Análise},
+  description={Resultado do processo de assimilação de dados — um campo que combina previsões de modelo com observações, ponderadas por suas incertezas.}
+}
+
+\newglossaryentry{background}{
+  name={Background},
+  description={Estimativa inicial (geralmente uma previsão de curto prazo) usada como ponto de partida na assimilação.}
+}
+
+\newglossaryentry{forecast}{
+  name={Previsão},
+  description={Resultado da integração do modelo a partir da análise ou de um estado inicial fornecido.}
+}
+
+\newglossaryentry{variacional}{
+  name={Método Variacional},
+  description={Técnica de assimilação que encontra o estado ótimo minimizando uma função custo em um espaço contínuo.}
+}
+
+\newglossaryentry{ensemble}{
+  name={Ensemble},
+  description={Conjunto de múltiplas previsões do modelo com pequenas perturbações iniciais, usado para representar incertezas.}
+}
+
+%======================================================================
+% FIM DO ARQUIVO
+%======================================================================
+
