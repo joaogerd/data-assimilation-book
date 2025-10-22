@@ -531,3 +531,5 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/latex,tex,macos,linux,windows
 .latexmk
+/src/main.pdf
+/src/*.ist
