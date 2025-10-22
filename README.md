@@ -6,14 +6,34 @@ Foco: fundamentos, prática e perspectivas da assimilação de dados aplicada à
 ## Estrutura
 ```
 
-src/
-main.tex
-preamble.tex
-chapters/ch01.tex ... ch11.tex
-bib/references.bib
-figures/
-tables/
-glossary.tex
+data-assimilation-book/
+│
+├── src/
+│   ├── main.tex
+│   ├── preamble.tex
+│   ├── chapters/
+│   │   ├── ch01.tex   # Introdução
+│   │   ├── ch02.tex   # Fundamentos teóricos
+│   │   ├── ch03.tex   # Modelagem numérica
+│   │   ├── ch04.tex   # Observações
+│   │   ├── ch05.tex   # Métodos de assimilação
+│   │   ├── ch06.tex   # Filtragem e variação
+│   │   ├── ch07.tex   # Métodos híbridos
+│   │   ├── ch08.tex   # Qualidade e erro
+│   │   ├── ch09.tex   # HPC e automação
+│   │   ├── ch10.tex   # Aplicações
+│   │   └── ch11.tex   # Perspectivas futuras
+│   ├── bib/
+│   │   └── references.bib
+│   ├── figures/
+│   ├── tables/
+│   └── glossary.tex
+│
+├── Makefile
+├── README.md
+├── LICENSE
+└── .gitignore
+
 
 ````
 
