@@ -1,0 +1,208 @@
+\documentclass{article}
+
+% ------ fontes e layout básicos ------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=0mm]{geometry}
+
+% ------ TikZ ------
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows.meta,
+  calc,
+  decorations.text,
+  decorations.pathmorphing,
+  positioning
+}
+
+% ------ paleta (tons "met oce/teal") ------
+\definecolor{c1}{RGB}{ 28, 53, 77}   % faixa/título
+\definecolor{c2}{RGB}{ 62, 97,127}   % contornos fortes
+\definecolor{c3}{RGB}{104,182,182}   % contornos médios
+\definecolor{c4}{RGB}{150,210,210}   % contornos leves
+\definecolor{c5}{RGB}{ 95,162,162}   % detalhes
+\definecolor{used}{RGB}{ 40,160, 60} % obs usadas
+\definecolor{rej}{RGB}{200, 70, 70}  % obs rejeitadas
+\definecolor{bg}{RGB}{245,248,250}   % fundo
+
+\pagestyle{empty}
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{tikzpicture}[remember picture, overlay]
+  % ===== fundo geral =====
+  \fill[bg] (current page.south west) rectangle (current page.north east);
+
+  % ===== moldura discreta =====
+  \draw[line width=5pt, draw=c4!30]
+    ([xshift=3mm,yshift=3mm]current page.south west)
+    rectangle
+    ([xshift=-3mm,yshift=-3mm]current page.north east);
+
+  % ===== faixa lateral para título =====
+  \path let \p1 = (current page.north west), \p2 = (current page.south west) in
+    coordinate (LW) at (\x1,\y1)
+    coordinate (SW) at (\x2,\y2);
+  % largura da faixa:
+  \def\SideW{0.33*\paperwidth}
+  \fill[c1] (LW) rectangle ++(\SideW,-\paperheight);
+
+  % ===== bloco do campo com isolinhas (clipe à área direita) =====
+  \begin{scope}
+    \clip ([xshift=\SideW]current page.north west) rectangle (current page.south east);
+
+    % grade leve (lat-lon estilizada)
+    \foreach \x in {0.08,0.16,...,0.96} {
+      \draw[c4!25, line width=0.4pt] ($(current page.south west)!{\x}!(current page.south east)$) -- ++(0,\paperheight);
+    }
+    \foreach \y in {0.08,0.16,...,0.96} {
+      \draw[c4!25, line width=0.4pt] ($(current page.south west)!{\y}!(current page.north west)$) -- ++(\paperwidth,0);
+    }
+
+    % "núcleo" (tipo um vórtice/baixa) para dar referência visual
+    \coordinate (C) at ($(current page.center)+(0.18\paperwidth, -0.12\paperheight)$);
+
+    % isolinhas (3 níveis, mais rugosas conforme se afastam)
+    % nível interno (liso)
+    \draw[c2, line width=2pt]
+      plot [smooth cycle, tension=0.9]
+      coordinates {
+        ($(C)+(-4.0,  1.2)$)
+        ($(C)+(-1.2,  2.2)$)
+        ($(C)+( 1.0,  2.0)$)
+        ($(C)+( 3.2,  0.8)$)
+        ($(C)+( 2.6, -1.4)$)
+        ($(C)+( 0.6, -2.4)$)
+        ($(C)+(-2.6,-1.8)$)
+      };
+
+    % nível médio (um pouco “rough”)
+    \draw[c3, line width=1.6pt, decorate,
+          decoration={random steps, segment length=10pt, amplitude=2pt}]
+      plot [smooth cycle, tension=0.85]
+      coordinates {
+        ($(C)+(-6.4,  1.6)$)
+        ($(C)+(-2.2,  3.0)$)
+        ($(C)+( 1.4,  3.0)$)
+        ($(C)+( 4.4,  1.6)$)
+        ($(C)+( 4.0, -2.2)$)
+        ($(C)+( 0.8, -3.4)$)
+        ($(C)+(-3.6,-2.6)$)
+      };
+
+    % nível externo (mais rugoso)
+    \draw[c4, line width=1.2pt, decorate,
+          decoration={random steps, segment length=12pt, amplitude=3pt}]
+      plot [smooth cycle, tension=0.82]
+      coordinates {
+        ($(C)+(-8.0,  2.2)$)
+        ($(C)+(-3.0,  4.0)$)
+        ($(C)+( 2.0,  4.0)$)
+        ($(C)+( 6.2,  2.0)$)
+        ($(C)+( 5.6, -3.0)$)
+        ($(C)+( 0.6, -4.4)$)
+        ($(C)+(-4.8, -3.4)$)
+      };
+
+    % observações (usadas e rejeitadas)
+
+    % Lista de deslocamentos x/y (sem $...$ aqui)
+    \foreach \dx/\dy in {-2.8/1.0, -1.4/1.8, 0.6/1.6, 2.2/0.4, 1.8/-0.8, -0.6/-1.2, -2.0/-0.6}{
+  
+      % Cria uma coordenada P = C + (dx,dy) usando calc corretamente:
+      \path coordinate (P) at ($(C)+(\dx,\dy)$);
+  
+      % Ponto
+      \fill[used] (P) circle (2.2pt);
+  
+      % Cruz
+      \draw[used, line width=0.8pt] ($(P)+(-0.14,0)$) -- ($(P)+(0.14,0)$);
+      \draw[used, line width=0.8pt] ($(P)+(0,-0.14)$) -- ($(P)+(0,0.14)$);
+    }
+  
+    \foreach \dx/\dy in{ 
+        -3.6/2.6,
+         3.2/1.8,
+         3.6/-1.8,
+        -1.6/-2.4
+    }{
+        \path coordinate (P) at ($(C)+(\dx,\dy)$);
+        \draw[rej, line width=1pt] ($(P)+(-0.18,-0.18)$) -- ($(P)+(0.18,0.18)$);
+        \draw[rej, line width=1pt] ($(P)+(-0.18,0.18)$) -- ($(P)+(0.18,-0.18)$);
+    }
+
+
+
+    % seta “background -> análise”
+    \draw[-{Latex[length=8pt,width=6pt]}, line width=2pt, c5]
+      ($(C)+(-0.09\paperwidth, 0.11\paperheight)$)
+      to[bend left=15]
+      node[midway, above right=2pt, c5!60!black, font=\sffamily\small]{background $\to$ an\'alise}
+      ($(C)+(0.06\paperwidth, -0.02\paperheight)$);
+
+%    % equações ao longo de caminhos curvos
+%    % caminho 1 – função custo
+%    \path[c3, line width=1pt, name path=Jpath]
+%      ($(C)+(-0.22\paperwidth, 0.18\paperheight)$)
+%      to[out=-20, in=160]
+%      ($(C)+(0.10\paperwidth, 0.08\paperheight)$)
+%      to[out=-20, in=160]
+%      ($(C)+(0.28\paperwidth,-0.04\paperheight)$);
+%
+%    \draw[c3, line width=1pt, postaction={
+%      decorate, decoration={
+%        text along path,
+%        text align=center,
+%        raise=1.8ex,
+%        text={|\sffamily\footnotesize\color{c3!90!black}|
+%          $\displaystyle
+%          J(\mathbf{x})=\tfrac{1}{2}(\mathbf{x}-\mathbf{x}^{b})^{\!T}\mathbf{B}^{-1}(\mathbf{x}-\mathbf{x}^{b})
+%          +\tfrac{1}{2}(\mathbf{y}-\mathbf{H}\mathbf{x})^{\!T}\mathbf{R}^{-1}(\mathbf{y}-\mathbf{H}\mathbf{x})
+%          $}}}]
+%      (Jpath);
+%
+%    % caminho 2 – equação de análise
+%    \path[c2, line width=1.2pt, name path=Apath]
+%      ($(C)+(-0.18\paperwidth,-0.18\paperheight)$)
+%      to[out=30, in=200]
+%      ($(C)+(-0.02\paperwidth,-0.04\paperheight)$)
+%      to[out=10, in=170]
+%      ($(C)+(0.18\paperwidth, 0.02\paperheight)$);
+%
+%    \draw[c2, line width=1.2pt, postaction={
+%      decorate, decoration={
+%        text along path,
+%        text align=center,
+%        raise=1.8ex,
+%        text={|\sffamily\footnotesize\color{c2}!90!black|
+%          $\displaystyle
+%          \mathbf{x}^{a}=\mathbf{x}^{b}+\mathbf{K}\bigl(\mathbf{y}-\mathbf{H}\mathbf{x}^{b}\bigr),\quad
+%          \mathbf{K}=\mathbf{B}\mathbf{H}^{T}\bigl(\mathbf{H}\mathbf{B}\mathbf{H}^{T}+\mathbf{R}\bigr)^{-1}
+%          $}}}]
+%      (Apath);
+
+  \end{scope}
+%
+%  % ===== Título/Subtítulo/Autor (na faixa) =====
+%  \node[anchor=west, text=white, font=\sffamily\bfseries, align=left]
+%    at ([xshift=10mm,yshift=-22mm]current page.north west)
+%    {\fontsize{30}{36}\selectfont Introdu\c c\~ao \`a Assimila\c c\~ao de Dados\\[-1mm]
+%     \rule{0.86\SideW}{1pt}\\[1mm]
+%     \fontsize{14}{18}\selectfont Fundamentos, pr\'atica e perspectivas};
+%
+%  \node[anchor=west, text=white, font=\sffamily, align=left]
+%    at ([xshift=10mm,yshift=-0.88\paperheight]current page.north west)
+%    {\large Jo\~ao Gerd Zell de Mattos};
+%
+%  % ===== legenda pequena (opcional) =====
+%  \node[anchor=south east, font=\sffamily\scriptsize, align=right, c2!80!black]
+%    at ([xshift=-6mm,yshift=6mm]current page.south east)
+%    {Isolinhas estilizadas, pontos de observa\c c\~ao\\
+%     (verde: usadas; vermelho: rejeitadas)};
+
+\end{tikzpicture}
+
+\end{document}
+

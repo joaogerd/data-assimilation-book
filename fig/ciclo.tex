@@ -1,0 +1,150 @@
+% ==============================================================
+%  Ciclo de Assimilação de Dados — setas em anel + caixas externas
+%  >> Arquivo standalone (pdflatex) — SALVAR EM UTF-8 <<
+%
+%  O que este arquivo faz:
+%    - Desenha um anel com N setas (arcos) igualmente espaçadas.
+%    - Cada seta pode ter texto curvado (estilo \mytextstyle).
+%    - Caixas de rótulo ficam para fora do anel, ancoradas radialmente.
+%
+%  Como personalizar rapidamente:
+%    * Número de etapas:      mude \N
+%    * Espaço entre setas:    mude \Gap (graus)
+%    * Largura do anel:       mude \Rin, \Rmid, \Rout
+%    * Ponta da seta:         mude \Tip (graus)
+%    * Distância das caixas:  mude \Cout (raio onde elas ficam)
+%    * Posição das caixas:    edite a lista do \foreach (ângulo e âncora)
+%    * Cores:                 ajustes em \tikzset{arrow/<i>/.style=...}
+%
+%  Pitfalls evitados:
+%    - Nada de \numexpr no \foreach; inteiros vêm de \pgfmathtruncatemacro.
+%    - Não passamos expressões cruas (tipo \Step/2) como argumentos.
+%    - As âncoras das caixas usam nomes válidos do TikZ: east/west/north/south.
+% ==============================================================
+
+\documentclass[tikz,border=10pt]{standalone}
+
+% --- Texto e fontes ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}   % (se compilar com lualatex/xelatex, remova)
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\renewcommand\familydefault{lmss}
+
+% --- TikZ: bibliotecas necessárias ---
+\usetikzlibrary{decorations.text,positioning, shadows}
+\usetikzlibrary{arrows.meta,calc} % (calc para coordenadas polares/expressões)
+% --------------------------------------------------------------
+% Estilo do texto desenhado AO LONGO DO ARCO (interno às setas)
+% --------------------------------------------------------------
+\newcommand*{\mytextstyle}{\sffamily\footnotesize\bfseries\color{black!85}}
+
+% --------------------------------------------------------------
+% MACRO PRINCIPAL: \arcarrow
+% Desenha UMA seta em arco com texto curvado.
+%
+% Assinatura:
+%   \arcarrow{rin}{rmid}{rout}{angIni}{angFim}{tip}{tikz-options}{texto}
+%
+% - rin, rmid, rout: raios interno, médio (texto) e externo da seta.
+% - angIni, angFim:  ângulos em graus (orientação padrão do TikZ).
+% - tip:              avanço (em graus) no raio médio para formar a “ponta”.
+% - tikz-options:     opções passadas ao \fill (fill, draw, espessura etc.).
+% - texto:            string desenhada ao longo do arco médio.
+% --------------------------------------------------------------
+\newcommand{\arcarrow}[8]{%
+  % Normalização numérica (evita expansão prematura)
+  \pgfmathsetmacro{\rin}{#1}
+  \pgfmathsetmacro{\rmid}{#2}
+  \pgfmathsetmacro{\rout}{#3}
+  \pgfmathsetmacro{\astart}{#4}
+  \pgfmathsetmacro{\aend}{#5}
+  \pgfmathsetmacro{\atip}{#6}
+
+  % Shape preenchido (cunha + ponta)
+  \fill[#7]
+    (\astart:\rin) arc (\astart:\aend:\rin)   % arco interno
+    -- (\aend+\atip:\rmid)                    % ponta no raio médio
+    -- (\aend:\rout) arc (\aend:\astart:\rout)% arco externo (volta)
+    -- (\astart+\atip:\rmid) -- cycle;        % fecha a cunha no raio médio
+
+  % Texto ao longo do arco médio (opcional; remova se não quiser texto interno)
+  \path[
+    decoration={text along path, text={|\mytextstyle|#8},
+                text align=center, raise=-0.3ex},
+    decorate
+  ] (\astart+\atip:\rmid) arc (\astart+\atip:\aend+\atip:\rmid);
+}
+
+\begin{document}
+\begin{tikzpicture}[>=latex,line join=bevel]
+
+  % ===================== PARÂMETROS GERAIS =====================
+  \def\N{4}      % número de setas/etapas no anel
+  \def\Gap{12}   % gap angular (graus) entre setas
+
+  % Larguras angulares (calculadas para fechar 360° com N setas + N gaps)
+  \pgfmathsetmacro{\Span}{(360-\N*\Gap)/\N} % largura de cada seta (graus)
+  \pgfmathsetmacro{\Step}{\Span+\Gap}       % passo angular entre centros
+  \pgfmathtruncatemacro{\Nm}{\N-1}          % inteiro seguro p/ foreach
+
+  % Raios do anel (controle da “grossura” das setas)
+  \def\Rin{3.05}
+  \def\Rmid{3.45}
+  \def\Rout{3.95}
+  \def\Tip{7}    % “ponta” da seta em graus (3–8 costuma ficar bonito)
+
+  % Fundo (anéis de referência e raio das caixas)
+  \def\Cin{\Rin-1.05}     % círculo interno do halo
+  \def\Cout{\Rout+0.15}   % raio base para posicionar as caixas
+
+  % ================ FUNDO / HALO (opcional) ====================
+  \fill[even odd rule,gray!10] circle (\Cout) circle (\Cin); % halo
+  \fill[white,opacity=.90] circle (2.05);                    % miolo claro
+
+  % ================ ESTILOS DE COR PARA AS SETAS ===============
+  % Use arrow/0,...,arrow/3. Para mais etapas, defina arrow/4, arrow/5, etc.
+  \tikzset{
+    arrow/0/.style = {fill=teal!30,   draw=teal!70!black,  very thick, line width=1.2pt},
+    arrow/1/.style = {fill=green!30,  draw=green!60!black, very thick, line width=1.2pt},
+    arrow/2/.style = {fill=orange!40, draw=orange!70!black,very thick, line width=1.2pt},
+    arrow/3/.style = {fill=blue!30,   draw=blue!70!black,  very thick, line width=1.2pt},
+    % Estilo das caixas externas:
+    infobox/.style = {
+      draw=black!40, rounded corners=2.2mm, fill=white, drop shadow,
+      text width=4.0cm, align=center, inner sep=4pt
+    }
+  }
+
+  % ===================== DESENHO DAS ETAPAS =====================
+  % Lista robusta com 4 campos: índice / ângulo / âncora / texto.
+  % OBS: as âncoras devem ser válidas no TikZ: east, west, north, south.
+  %      O ângulo (\theta) determina a direção radial da caixa.
+  \foreach \i/\theta/\anch/\etapa in {
+    0/  25/west/{\textbf{Previsão curta (modelo)}\\Gera $\mathbf{x}_b$ para a janela seguinte},
+    1/ 120/south/{\textbf{Coleta \& CQ das observações}\\Janela centrada na análise; filtros e QC},
+    2/ 215/east/{\textbf{Análise (assimilação)}\\$\mathbf{x}_a=\mathbf{x}_b+\mathbf{K}\bigl(\mathbf{y}-\mathcal{H}(\mathbf{x}_b)\bigr)$},
+    3/ 305/north/{\textbf{Condições iniciais}\\Propaga $\mathbf{x}_a$ para o próximo ciclo}
+  }{
+    % Centro e limites angulares da seta i
+    \pgfmathsetmacro{\center}{\i*\Step}
+    \pgfmathsetmacro{\astart}{\center-0.5*\Span}
+    \pgfmathsetmacro{\aend}{\center+0.5*\Span}
+
+    % Seta (texto interno curto: “etapa i”; pode trocar por {} se não quiser texto)
+    \arcarrow{\Rin}{\Rmid}{\Rout}{\astart}{\aend}{\Tip}{arrow/\i}{etapa \i}
+
+    % Caixa da etapa i (posição polar: ângulo \theta, raio \Cout)
+    %  - anchor=\anch prende a caixa pelo lado indicado (east/west/north/south)
+    \node[infobox,anchor=\anch] at (\center:\Cout) {\etapa};
+  }
+
+  % ======================= TÍTULO CENTRAL =======================
+  \node[align=center, text=black!75]
+   {\bfseries Ciclo de \\ \bfseries Assimilação de Dados \\
+    Integração contínua\\ modelo e observações\\
+    (\textit{novo ciclo})};
+
+\end{tikzpicture}
+\end{document}
+

@@ -1,0 +1,50 @@
+% ==============================================================
+%  Macro e estilo do arco em seta (\arcarrow)
+%  >> Inclua este arquivo com: \input{fig/arcarrow.tex}
+% ==============================================================
+% --- TikZ: bibliotecas necessárias ---
+\usetikzlibrary{decorations.text,positioning, shadows}
+\usetikzlibrary{arrows.meta,calc} % (calc para coordenadas polares/expressões)
+% --------------------------------------------------------------
+% Estilo do texto desenhado AO LONGO DO ARCO (interno às setas)
+% --------------------------------------------------------------
+\newcommand*{\mytextstyle}{\sffamily\footnotesize\bfseries\color{black!85}}
+
+% --------------------------------------------------------------
+% MACRO PRINCIPAL: \arcarrow
+% Desenha UMA seta em arco com texto curvado.
+%
+% Assinatura:
+%   \arcarrow{rin}{rmid}{rout}{angIni}{angFim}{tip}{tikz-options}{texto}
+%
+% - rin, rmid, rout: raios interno, médio (texto) e externo da seta.
+% - angIni, angFim:  ângulos em graus (orientação padrão do TikZ).
+% - tip:              avanço (em graus) no raio médio para formar a “ponta”.
+% - tikz-options:     opções passadas ao \fill (fill, draw, espessura etc.).
+% - texto:            string desenhada ao longo do arco médio.
+% --------------------------------------------------------------
+\newcommand{\arcarrow}[8]{%
+  % Normalização numérica (evita expansão prematura)
+  \pgfmathsetmacro{\rin}{#1}
+  \pgfmathsetmacro{\rmid}{#2}
+  \pgfmathsetmacro{\rout}{#3}
+  \pgfmathsetmacro{\astart}{#4}
+  \pgfmathsetmacro{\aend}{#5}
+  \pgfmathsetmacro{\atip}{#6}
+
+  % Shape preenchido (cunha + ponta)
+  \fill[#7]
+    (\astart:\rin) arc (\astart:\aend:\rin)   % arco interno
+    -- (\aend+\atip:\rmid)                    % ponta no raio médio
+    -- (\aend:\rout) arc (\aend:\astart:\rout)% arco externo (volta)
+    -- (\astart+\atip:\rmid) -- cycle;        % fecha a cunha no raio médio
+
+  % Texto ao longo do arco médio (opcional; remova se não quiser texto interno)
+  \path[
+    decoration={text along path, text={|\mytextstyle|#8},
+                text align=center, raise=-0.3ex},
+    decorate
+  ] (\astart+\atip:\rmid) arc (\astart+\atip:\aend+\atip:\rmid);
+}
+
+

@@ -1,0 +1,27 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{calc,decorations.text}
+\definecolor{c3}{RGB}{107,190,190}
+
+\newcommand{\CostEq}{%
+  $\displaystyle
+  J(\mathbf{x})=\tfrac{1}{2}(\mathbf{x}-\mathbf{x}^{b})^{\!T}\mathbf{B}^{-1}(\mathbf{x}-\mathbf{x}^{b})
+  +\tfrac{1}{2}(\mathbf{y}-\mathbf{H}\mathbf{x})^{\!T}\mathbf{R}^{-1}(\mathbf{y}-\mathbf{H}\mathbf{x})$}
+
+\begin{document}
+\begin{tikzpicture}
+  \coordinate (C) at (0,0);
+
+  \draw[c3, line width=1pt,
+        postaction={decorate, decoration={
+          text along path, text align=center, raise=1.8ex,
+          text={|\sffamily\footnotesize\color{c3!90!black}|\CostEq}
+        }}]
+    ($(C)+(-0.22\paperwidth, 0.18\paperheight)$)
+      to[out=-20, in=160]
+    ($(C)+( 0.10\paperwidth, 0.08\paperheight)$)
+      to[out=-20, in=160]
+    ($(C)+( 0.28\paperwidth,-0.04\paperheight)$);
+\end{tikzpicture}
+\end{document}
+

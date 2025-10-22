@@ -1,0 +1,233 @@
+%======================================================================
+% Livro: Introdução à Assimilação de Dados
+% Autor: João Gerd Zell de Mattos
+% Compilação recomendada: pdflatex -> biber -> pdflatex -> pdflatex
+%======================================================================
+\documentclass[12pt,a4paper,oneside]{book}
+
+%----------------------------- Pacotes --------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{epigraph}
+\usepackage[acronym,toc]{glossaries}
+\usepackage{makeidx}
+\usepackage[backend=biber,style=authoryear,maxbibnames=10,uniquename=false]{biblatex}
+
+% Bibliografia (arquivo externo .bib)
+\addbibresource{references.bib}
+
+%----------------------- Metadados do documento -----------------------
+\title{Introdução à Assimilação de Dados}
+\author{João Gerd Zell de Mattos}
+\date{\today}
+
+%------------------------ Aparência e estilos -------------------------
+\onehalfspacing
+\definecolor{brandA}{HTML}{0B5FA5} % azul
+\definecolor{brandB}{HTML}{F28C28} % laranja
+\definecolor{ink}{HTML}{1F2937}     % cinza escuro
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=brandA,
+  citecolor=brandB,
+  urlcolor=brandA,
+  pdftitle={Introdução à Assimilação de Dados},
+  pdfauthor={João Gerd Zell de Mattos},
+  pdfsubject={Assimilação de Dados},
+  pdfkeywords={assimilação de dados, análise objetiva, filtros, kalman, var, enkf}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\leftmark}
+\rfoot{\thepage}
+
+% Títulos mais limpos
+\titleformat{\chapter}[display]
+  {\bfseries\Huge\color{ink}}
+  {\filright\Large\color{brandB}\thechapter}
+  {1ex}
+  {\titlerule[0.8pt]\vspace{1ex}\filright}
+  [\vspace{1ex}\titlerule]
+
+\titleformat{\section}
+  {\bfseries\Large\color{ink}}{\thesection}{0.8em}{}
+
+% Epígrafe mais elegante
+\setlength{\epigraphwidth}{0.7\textwidth}
+\setlength{\epigraphrule}{0pt}
+
+% Glossário e índice
+\makeglossaries
+\newacronym{ad}{AD}{Assimilação de Dados}
+\newacronym{obana}{OBAN}{Análise Objetiva}
+\newacronym{enkf}{EnKF}{Ensemble Kalman Filter}
+\newacronym{var}{VAR}{Método Variacional}
+\makeindex
+
+%------------------------------ Capa ----------------------------------
+\newcommand{\CustomTitlePage}{
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+  % Faixa colorida
+  \fcolorbox{white}{brandA}{%
+    \begin{minipage}{0.95\linewidth}
+      \vspace*{1.6cm}
+      \centering
+      {\bfseries\fontsize{28pt}{30pt}\selectfont\color{white} Introdução à Assimilação de Dados\par}
+      \vspace{0.6cm}
+      {\Large\color{white} Fundamentos de interpolação, análise objetiva e métodos modernos\par}
+      \vspace{1.6cm}
+    \end{minipage}
+  }
+  \vfill
+  {\Large\color{ink} \textbf{João Gerd Zell de Mattos}\par}
+  \vspace{0.25cm}
+  {\large\color{ink} \today\par}
+  \vspace{1.5cm}
+  \begin{center}
+    \rule{0.35\linewidth}{0.6pt}\par
+    \vspace{0.2cm}
+    {\small\color{ink} (rascunho / edição do autor)}
+  \end{center}
+\end{titlepage}
+}
+
+%======================================================================
+\begin{document}
+\CustomTitlePage
+\frontmatter
+
+%---------------------------- Dedicatória -----------------------------
+\chapter*{Dedicatória}
+\addcontentsline{toc}{chapter}{Dedicatória}
+\vspace*{2cm}
+\begin{flushright}
+\emph{A todos que acreditam que unir ciência, computação e observações\\
+pode aproximar a previsão da realidade.}
+\end{flushright}
+
+%----------------------------- Epígrafe -------------------------------
+\chapter*{Epígrafe}
+\addcontentsline{toc}{chapter}{Epígrafe}
+\epigraph{Entre o que o modelo prevê e o que o instrumento observa,\\
+buscamos a melhor estimativa possível.}{\textit{Autor desconhecido}}
+
+%-------------------------- Agradecimentos ----------------------------
+\chapter*{Agradecimentos}
+\addcontentsline{toc}{chapter}{Agradecimentos}
+Agradeço aos colegas, estudantes e parceiros institucionais que, direta ou indiretamente, contribuíram com discussões, dados, código e ideias. Aos leitores, pela curiosidade e paciência necessárias para trilhar os fundamentos e as fronteiras da \gls{ad}.
+
+%------------------------------ Prefácio ------------------------------
+\chapter*{Prefácio}
+\addcontentsline{toc}{chapter}{Prefácio}
+Este livro nasce com a intenção de apresentar a \gls{ad} a partir de um caminho intuitivo: da interpolação clássica aos métodos modernos que ponderam informações por seus erros e covariâncias. A obra organiza conceitos essenciais, exemplos práticos e ponte com sistemas operacionais, servindo tanto como porta de entrada quanto como mapa para estudos mais avançados.
+
+% Sumário
+\tableofcontents
+
+\mainmatter
+
+%======================================================================
+% PARTE I
+%======================================================================
+\part{O caminho até a assimilação de dados}
+
+\chapter{A arte de combinar informações}
+\noindent\textbf{Resumo:} Este capítulo introduz a ideia fundamental da \gls{ad} como a arte de combinar diferentes fontes de informação — o modelo numérico e as observações — para aproximar-se do estado real do sistema. Estabelece o paralelo entre interpolação e estimativa estatística com pesos baseados em erro.
+\section{Entre o modelo e a realidade}
+\section{A interpolação como estimativa ponderada}
+\section{A transição para pesos baseados em erro}
+
+\chapter{Interpolação: o ponto de partida}
+\noindent\textbf{Resumo:} Fundamentos de interpolação (linear, polinomial e afins), noções de continuidade/suavidade e limitações práticas em presença de ruído, lacunas e extrapolação.
+\section{Interpolação linear e polinomial}
+\section{Limitações e desafios práticos}
+\section{Aplicações meteorológicas simples}
+
+\chapter{Ajuste por mínimos quadrados}
+\noindent\textbf{Resumo:} Do ajuste exato ao ótimo: resíduos, função custo e a ideia de melhor estimativa global quando os dados são ruidosos e inconsistentes.
+\section{Da interpolação exata ao ajuste ótimo}
+\section{Erros, resíduos e função custo}
+\section{A noção de melhor estimativa}
+
+\chapter{Ajustes em duas dimensões e função de suavização}
+\noindent\textbf{Resumo:} Extensão espacial em 2D, construção de campos em grade, regularização/suavização e compromissos entre fidelidade aos dados e coerência espacial.
+\section{Extensão espacial dos ajustes}
+\section{Suavização e regularização}
+\section{A construção de campos meteorológicos em grade}
+
+\chapter{Análise objetiva e o nascimento da assimilação de dados}
+\noindent\textbf{Resumo:} Transição para a análise objetiva (\gls{obana}): Cressman, Barnes e Sucessive Correction, resposta do filtro e papel das escalas. Ponte para a \gls{ad} moderna.
+\section{O conceito de análise objetiva (OBAN)}
+\section{Sucessive Correction, Cressman e Barnes}
+\section{Filtros espaciais e resposta da análise}
+
+%======================================================================
+% PARTE II
+%======================================================================
+\part{A assimilação de dados moderna}
+
+\chapter{Formulação estatística da assimilação de dados}
+\noindent\textbf{Resumo:} Definição de background, observações e análise; papel das matrizes de erro (B e R) e interpretação da análise como combinação ótima estatisticamente fundamentada.
+\section{Background, observações e análise}
+\section{As matrizes de erro e seus papéis}
+\section{A análise como combinação ótima}
+
+\chapter{O filtro de Kalman e suas variações}
+\noindent\textbf{Resumo:} Filosofia sequencial do Kalman, extensões variacionais (3D/4D-\gls{var}) e filtros de conjunto (\gls{enkf}), ressaltando custo computacional, representação de erro e não linearidades.
+\section{Introdução ao filtro de Kalman}
+\section{Extensão para 3DVAR e 4DVAR}
+\section{Filtros de conjunto (EnKF e variantes)}
+
+\chapter{Sistemas operacionais e exemplos reais}
+\noindent\textbf{Resumo:} Visão prática: sistemas GSI, JEDI, LETKF; o ciclo de assimilação e exemplos com observações de superfície, sondagens e satélite.
+\section{Sistemas de assimilação: GSI, JEDI, LETKF}
+\section{O ciclo de assimilação}
+\section{Casos práticos com dados de satélite e superfície}
+
+\chapter{O futuro da assimilação de dados}
+\noindent\textbf{Resumo:} Tendências: métodos híbridos, aprendizado de máquina, sistemas acoplados e desafios em regiões tropicais; novas plataformas observacionais.
+\section{Métodos híbridos e aprendizado de máquina}
+\section{Assimilação no sistema terrestre}
+\section{Desafios tropicais e novas observações}
+
+%======================================================================
+% Materiais de apoio
+%======================================================================
+\backmatter
+
+% Glossário e Siglas
+\printglossary[type=\acronymtype,title={Lista de Siglas}]
+\printglossary[title={Glossário}]
+
+% Bibliografia
+\printbibliography[title={Referências}]
+
+% Índice remissivo
+\printindex
+
+% Apêndices
+\appendix
+\chapter{Apêndice A: Notação e símbolos}
+\chapter{Apêndice B: Exercícios comentados}
+
+\end{document}

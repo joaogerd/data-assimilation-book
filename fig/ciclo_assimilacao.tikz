@@ -1,0 +1,70 @@
+\begin{tikzpicture}[>=latex,line join=bevel]
+
+  % ===================== PARÂMETROS GERAIS =====================
+  \def\N{4}      % número de setas/etapas no anel
+  \def\Gap{12}   % gap angular (graus) entre setas
+
+  % Larguras angulares (calculadas para fechar 360° com N setas + N gaps)
+  \pgfmathsetmacro{\Span}{(360-\N*\Gap)/\N} % largura de cada seta (graus)
+  \pgfmathsetmacro{\Step}{\Span+\Gap}       % passo angular entre centros
+  \pgfmathtruncatemacro{\Nm}{\N-1}          % inteiro seguro p/ foreach
+
+  % Raios do anel (controle da “grossura” das setas)
+  \def\Rin{3.05}
+  \def\Rmid{3.45}
+  \def\Rout{3.95}
+  \def\Tip{7}    % “ponta” da seta em graus (3–8 costuma ficar bonito)
+
+  % Fundo (anéis de referência e raio das caixas)
+  \def\Cin{\Rin-1.05}     % círculo interno do halo
+  \def\Cout{\Rout+0.15}   % raio base para posicionar as caixas
+
+  % ================ FUNDO / HALO (opcional) ====================
+  \fill[even odd rule,gray!10] circle (\Cout) circle (\Cin); % halo
+  \fill[white,opacity=.90] circle (2.05);                    % miolo claro
+
+  % ================ ESTILOS DE COR PARA AS SETAS ===============
+  % Use arrow/0,...,arrow/3. Para mais etapas, defina arrow/4, arrow/5, etc.
+  \tikzset{
+    arrow/0/.style = {fill=teal!30,   draw=teal!70!black,  very thick, line width=1.2pt},
+    arrow/1/.style = {fill=green!30,  draw=green!60!black, very thick, line width=1.2pt},
+    arrow/2/.style = {fill=orange!40, draw=orange!70!black,very thick, line width=1.2pt},
+    arrow/3/.style = {fill=blue!30,   draw=blue!70!black,  very thick, line width=1.2pt},
+    % Estilo das caixas externas:
+    infobox/.style = {
+      draw=black!40, rounded corners=2.2mm, fill=white, drop shadow,
+      text width=4.0cm, align=center, inner sep=4pt
+    }
+  }
+
+  % ===================== DESENHO DAS ETAPAS =====================
+  % Lista robusta com 4 campos: índice / ângulo / âncora / texto.
+  % OBS: as âncoras devem ser válidas no TikZ: east, west, north, south.
+  %      O ângulo (\theta) determina a direção radial da caixa.
+  \foreach \i/\theta/\anch/\etapa in {
+    0/  25/west/{\textbf{Previsão curta (modelo)}\\Gera $\mathbf{x}_b$ para a janela seguinte},
+    1/ 120/south/{\textbf{Coleta \& CQ das observações}\\Janela centrada na análise; filtros e QC},
+    2/ 215/east/{\textbf{Análise (assimilação)}\\$\mathbf{x}_a=\mathbf{x}_b+\mathbf{K}\bigl(\mathbf{y}-\mathcal{H}(\mathbf{x}_b)\bigr)$},
+    3/ 305/north/{\textbf{Condições iniciais}\\Propaga $\mathbf{x}_a$ para o próximo ciclo}
+  }{
+    % Centro e limites angulares da seta i
+    \pgfmathsetmacro{\center}{\i*\Step}
+    \pgfmathsetmacro{\astart}{\center-0.5*\Span}
+    \pgfmathsetmacro{\aend}{\center+0.5*\Span}
+
+    % Seta (texto interno curto: “etapa i”; pode trocar por {} se não quiser texto)
+    \arcarrow{\Rin}{\Rmid}{\Rout}{\astart}{\aend}{\Tip}{arrow/\i}{etapa \i}
+
+    % Caixa da etapa i (posição polar: ângulo \theta, raio \Cout)
+    %  - anchor=\anch prende a caixa pelo lado indicado (east/west/north/south)
+    \node[infobox,anchor=\anch] at (\center:\Cout) {\etapa};
+  }
+
+  % ======================= TÍTULO CENTRAL =======================
+  \node[align=center, text=black!75]
+   {\bfseries Ciclo de \\ \bfseries Assimilação de Dados \\
+    Integração contínua\\ modelo e observações\\
+    (\textit{novo ciclo})};
+
+\end{tikzpicture}
+

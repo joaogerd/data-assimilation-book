@@ -1,0 +1,122 @@
+\documentclass[border=0pt]{standalone}
+%\documentclass[12pt,a4paper]{article}
+% --- Fonte/idioma (ok com pdfLaTeX ou XeLaTeX) ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% --- TikZ ---
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shadings}
+
+% --- Tamanho físico da página A4 + margem zero ---
+\newdimen\coverW \coverW=210mm
+\newdimen\coverH \coverH=297mm
+\paperwidth=\coverW
+\paperheight=\coverH
+\usepackage[paperwidth=\paperwidth,paperheight=\paperheight,margin=0pt]{geometry}
+
+% --- Paleta ---
+\definecolor{coverBgA}{HTML}{0E2341}
+\definecolor{coverBgB}{HTML}{123E7A}
+\definecolor{accentC}{HTML}{29ABE2}
+\definecolor{accentG}{HTML}{1ABC9C}
+\definecolor{textWhite}{RGB}{245,245,247}
+\definecolor{softLine}{RGB}{200,220,245}
+
+% --- Metadados ---
+\newcommand{\BookTitleA}{Introdução à Assimilação de Dados}
+%\newcommand{\BookTitleB}{Dados}
+\newcommand{\BookSubtitle}{Fundamentos, prática e perspectivas}
+\newcommand{\BookAuthor}{João Gerd Zell de Mattos}
+
+\begin{document}
+\begin{tikzpicture} % <<< sem overlay
+
+  % 0) FUNDO SÓLIDO (diagnóstico): se isso não aparecer, nada mais aparecerá
+  \fill[coverBgA] (0,0) rectangle (\coverW,\coverH);
+
+  % 1) Gradiente por cima (se quiser o efeito original)
+  %    -> Se suspeitar do 'shade' no seu driver, comente estas 2 linhas.
+  \path[shade, left color=coverBgA, right color=coverBgB]
+    (0,0) rectangle (\coverW,\coverH);
+
+  % 2) Anéis
+  \pgfmathsetlengthmacro{\cx}{0.8*\coverW}
+  \pgfmathsetlengthmacro{\cy}{0.7*\coverH}
+  \foreach \r in {25mm,45mm,70mm,95mm}{
+    \draw[line width=0.6pt, draw=softLine, opacity=0.25] (\cx,\cy) circle (\r);
+  }
+  \pgfmathsetlengthmacro{\cx}{0.2*\coverW}
+  \pgfmathsetlengthmacro{\cy}{0.2*\coverH}
+  \foreach \r in {25mm,45mm,70mm,95mm}{
+    \draw[line width=0.6pt, draw=softLine, opacity=0.25] (\cx,\cy) circle (\r);
+  }
+
+
+  % 3) Rede leve (pode comentar se ficar pesado)
+  \begin{scope}[opacity=0.08]
+    \foreach \x in {0,15,...,210}{
+      \draw[textWhite!60] (\x mm,0) -- (\x mm,\coverH);
+    }
+    \foreach \y in {0,15,...,297}{
+      \draw[textWhite!60] (0,\y mm) -- (\coverW,\y mm);
+    }
+  \end{scope}
+
+%  % 4) Ciclo de assimilação
+%  \pgfmathsetlengthmacro{\rc}{38mm}
+%  \pgfmathsetlengthmacro{\cx}{0.72*\coverW}
+%  \pgfmathsetlengthmacro{\cy}{0.60*\coverH}
+%
+%  \node[draw=accentC, fill=accentC!10, text=textWhite, rounded corners=3pt,
+%        minimum width=28mm, align=center, font=\footnotesize]
+%    (n1) at ($(\cx,\cy) + (  0:\rc)$) {Previsão\\(modelo)};
+%  \node[draw=accentC, fill=accentC!10, text=textWhite, rounded corners=3pt,
+%        minimum width=30mm, align=center, font=\footnotesize]
+%    (n2) at ($(\cx,\cy) + ( 90:\rc)$) {Observações\\(satélite/superfície)};
+%  \node[draw=accentC, fill=accentC!10, text=textWhite, rounded corners=3pt,
+%        minimum width=28mm, align=center, font=\footnotesize]
+%    (n3) at ($(\cx,\cy) + (180:\rc)$) {Análise\\(assimilação)};
+%  \node[draw=accentC, fill=accentC!10, text=textWhite, rounded corners=3pt,
+%        minimum width=28mm, align=center, font=\footnotesize]
+%    (n4) at ($(\cx,\cy) + (270:\rc)$) {Integração\\(ciclo)};
+%
+%  \tikzset{cycarr/.style={-Latex, line width=0.9pt, draw=accentG}}
+%  \draw[cycarr] (n1) to[bend left=18] (n2);
+%  \draw[cycarr] (n2) to[bend left=18] (n3);
+%  \draw[cycarr] (n3) to[bend left=18] (n4);
+%  \draw[cycarr] (n4) to[bend left=18] (n1);
+%
+%  \draw[draw=accentG!60, line width=1pt, opacity=0.35] (\cx,\cy) circle (\rc+10mm);
+
+  % 5) Título
+  \node[anchor=center, text=textWhite, align=center]
+    at (0.12*\coverW,0.62*\coverH) {%
+      {\fontsize{34pt}{38pt}\selectfont\bfseries \BookTitleA}
+    };
+%
+%  % 6) Subtítulo (barra)
+%  \pgfmathsetlengthmacro{\bx}{0.12*\coverW}
+%  \pgfmathsetlengthmacro{\by}{0.49*\coverH}
+%  \pgfmathsetlengthmacro{\bw}{0.58*\coverW}
+%  \pgfmathsetlengthmacro{\bh}{14mm}
+%  \fill[accentC!20, rounded corners=2mm] (\bx,\by) rectangle (\bx+\bw,\by+\bh);
+%  \node[anchor=west, text=textWhite, align=left, font=\large]
+%    at (\bx+6mm,\by+0.5*\bh) {\BookSubtitle};
+
+  % 7) Autor
+  \node[anchor=west, text=textWhite!92, align=left, font=\normalsize]
+    at (0.12*\coverW,0.18*\coverH) {\BookAuthor};
+
+  % 8) Faixa inferior
+  \fill[accentG!20, opacity=0.25] (0,0) rectangle (\coverW,10mm);
+
+  % DEBUG opcional: enxerga a área útil
+  % \draw[red,very thick] (0,0) rectangle (\coverW,\coverH);
+
+\end{tikzpicture}
+\end{document}
+

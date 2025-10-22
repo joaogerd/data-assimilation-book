@@ -1,0 +1,136 @@
+%=========================================================
+% Capítulo 7 — O Filtro de Kalman e suas extensões
+%=========================================================
+\chapter{O Filtro de Kalman e suas extensões}
+\label{ch:kalman}
+
+\noindent\textbf{Resumo:}
+Este capítulo apresenta a formulação recursiva do Filtro de Kalman e suas variantes.  
+O filtro de Kalman é a forma dinâmica da assimilação de dados, permitindo a atualização contínua do estado e de sua incerteza à medida que novas observações chegam.  
+Discutem-se também as versões não lineares — EKF (Estendido) e EnKF (Ensemble) — aplicadas à meteorologia moderna.
+
+%---------------------------------------------------------
+\section{Do ajuste estático à estimativa dinâmica}
+Nos capítulos anteriores, tratamos da análise como um problema estático:  
+combinar background e observações em um único instante.  
+O Filtro de Kalman generaliza essa ideia para sistemas que evoluem no tempo.
+
+O estado do sistema $\mathbf{x}_k$ é previsto a partir do estado anterior $\mathbf{x}_{k-1}$ pelo modelo:
+\begin{equation}
+\mathbf{x}_k = \mathbf{M}_{k-1}\mathbf{x}_{k-1} + \boldsymbol{\eta}_{k-1},
+\label{eq:model-kalman}
+\end{equation}
+onde $\mathbf{M}_{k-1}$ é o operador de previsão e $\boldsymbol{\eta}_{k-1}$ o erro de modelo, com covariância $\mathbf{Q}_{k-1}$.
+
+As observações no tempo $k$ são:
+\begin{equation}
+\mathbf{y}_k = \mathbf{H}_k \mathbf{x}_k + \boldsymbol{\epsilon}_k,
+\label{eq:obs-kalman}
+\end{equation}
+onde $\boldsymbol{\epsilon}_k$ é o erro de observação, com covariância $\mathbf{R}_k$.
+
+%---------------------------------------------------------
+\section{Etapas do Filtro de Kalman}
+O filtro de Kalman opera em dois passos fundamentais: \emph{previsão} e \emph{atualização}.
+
+\subsection*{1. Previsão (forecast)}
+\[
+\mathbf{x}_k^b = \mathbf{M}_{k-1}\mathbf{x}_{k-1}^a,
+\]
+\[
+\mathbf{B}_k = \mathbf{M}_{k-1}\mathbf{A}_{k-1}\mathbf{M}_{k-1}^\top + \mathbf{Q}_{k-1}.
+\]
+Aqui, $\mathbf{x}_k^b$ é o estado previsto (background) e $\mathbf{B}_k$ a covariância de erro associada.
+
+\subsection*{2. Atualização (análise)}
+Quando as observações $\mathbf{y}_k$ tornam-se disponíveis, calcula-se a inovação:
+\[
+\mathbf{d}_k = \mathbf{y}_k - \mathbf{H}_k\mathbf{x}_k^b.
+\]
+Em seguida, aplica-se o ganho ótimo:
+\begin{equation}
+\mathbf{K}_k = \mathbf{B}_k \mathbf{H}_k^\top
+(\mathbf{H}_k \mathbf{B}_k \mathbf{H}_k^\top + \mathbf{R}_k)^{-1},
+\label{eq:gain-kalman}
+\end{equation}
+e atualiza-se a análise:
+\[
+\mathbf{x}_k^a = \mathbf{x}_k^b + \mathbf{K}_k \mathbf{d}_k.
+\]
+A covariância de erro é atualizada por:
+\[
+\mathbf{A}_k = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k)\mathbf{B}_k.
+\]
+
+Essas equações constituem o \textbf{Filtro de Kalman Linear}, que fornece a estimativa ótima em sentido de mínimos quadrados para sistemas lineares com erros gaussianos.
+
+%---------------------------------------------------------
+\section{Interpretação geométrica e probabilística}
+O filtro de Kalman realiza, a cada ciclo, uma fusão de distribuições de probabilidade.  
+O background é uma distribuição normal centrada em $\mathbf{x}_b$ com covariância $\mathbf{B}$; as observações, outra centrada em $\mathbf{y}$ com covariância $\mathbf{R}$.  
+A análise é a distribuição resultante da combinação dessas duas informações, com variância reduzida (Figura~\ref{fig:kalman-geometry}).
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+  \begin{axis}[
+    width=0.9\linewidth, height=6cm,
+    xlabel={Estado $x$}, ylabel={Densidade $p(x)$},
+    xmin=0, xmax=10, ymin=0, ymax=0.6,
+    grid=both, grid style={densely dotted},
+    legend style={at={(0.98,0.98)},anchor=north east,draw=none}
+  ]
+    \addplot+[domain=0:10, samples=300, thick] {exp(-((x-3)^2)/1.5)}; \addlegendentry{background}
+    \addplot+[domain=0:10, samples=300, thick, dashed] {exp(-((x-7)^2)/0.8)}; \addlegendentry{observação}
+    \addplot+[domain=0:10, samples=300, thick, color=brandA] {exp(-((x-5)^2)/0.5)}; \addlegendentry{análise}
+  \end{axis}
+\end{tikzpicture}
+\caption{Interpretação probabilística do filtro de Kalman: a análise resulta da fusão entre a incerteza do modelo (background) e a das observações.}
+\label{fig:kalman-geometry}
+\end{figure}
+
+%---------------------------------------------------------
+\section{O Filtro de Kalman Estendido (EKF)}
+Para sistemas não lineares, substituímos os operadores lineares por funções:
+\[
+\mathbf{x}_k = \mathcal{M}(\mathbf{x}_{k-1}) + \boldsymbol{\eta}_{k-1}, \qquad
+\mathbf{y}_k = \mathcal{H}(\mathbf{x}_k) + \boldsymbol{\epsilon}_k.
+\]
+O \textbf{Filtro de Kalman Estendido (EKF)} lineariza essas funções em torno do estado atual:
+\[
+\mathbf{M}_k = \frac{\partial \mathcal{M}}{\partial \mathbf{x}} \bigg|_{\mathbf{x}_k^a}, \qquad
+\mathbf{H}_k = \frac{\partial \mathcal{H}}{\partial \mathbf{x}} \bigg|_{\mathbf{x}_k^b}.
+\]
+O restante do algoritmo é idêntico ao filtro linear, mas a precisão depende da validade da linearização — o que pode ser problemático em sistemas altamente não lineares, como a atmosfera.
+
+%---------------------------------------------------------
+\section{O Filtro de Kalman por Conjunto (EnKF)}
+O \textbf{Filtro de Kalman por Conjunto (Ensemble Kalman Filter)} foi desenvolvido para contornar as limitações computacionais do EKF.  
+Em vez de armazenar a matriz $\mathbf{B}$ explicitamente, o EnKF representa as incertezas por um conjunto de amostras (\emph{ensemble}) do estado:
+\[
+\mathbf{B} \approx \frac{1}{N-1} \sum_{i=1}^{N} (\mathbf{x}_i^b - \bar{\mathbf{x}}^b)(\mathbf{x}_i^b - \bar{\mathbf{x}}^b)^\top.
+\]
+Cada membro do conjunto é atualizado com as mesmas equações de Kalman, usando as observações perturbadas:
+\[
+\mathbf{x}_{i,k}^a = \mathbf{x}_{i,k}^b + \mathbf{K}_k (\mathbf{y}_{i,k} - \mathbf{H}\mathbf{x}_{i,k}^b).
+\]
+O EnKF é amplamente utilizado em assimilação atmosférica e oceânica devido à sua escalabilidade e representação estatística natural das covariâncias.
+
+%---------------------------------------------------------
+\section{Aplicações meteorológicas}
+O filtro de Kalman e suas variantes são aplicados em:
+\begin{itemize}
+  \item sistemas de previsão numérica do tempo (\textbf{NWP}), onde atualizam o estado atmosférico continuamente;
+  \item assimilação de observações de satélite e superfície;
+  \item previsão de estados oceânicos e hidrológicos;
+  \item controle de qualidade de observações (detecção de outliers).
+\end{itemize}
+Em modelos globais, o EnKF é frequentemente acoplado a esquemas variacionais híbridos (3DVar/4DVar), resultando nos modernos sistemas \textbf{EnVar}.
+
+%---------------------------------------------------------
+\section{Síntese}
+O filtro de Kalman representa a unificação dos conceitos de interpolação, mínimos quadrados e análise objetiva dentro de um arcabouço probabilístico dinâmico.  
+Sua generalização — o EnKF — é hoje uma das ferramentas mais poderosas da assimilação numérica de dados geofísicos.  
+No próximo capítulo, abordaremos a \emph{assimilação variacional}, mostrando como o mesmo problema pode ser formulado como a minimização de um funcional no espaço do modelo, levando aos métodos 3DVar e 4DVar.
+
+% Fim do Capítulo 7
