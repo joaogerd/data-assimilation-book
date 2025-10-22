@@ -10,26 +10,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           lfs: true
 
-      - name: Setup TeX Live (full)
-        uses: teatimeguest/setup-texlive-action@v3
+      - name: Build PDF (latexmk + biber via texlive-full)
+        uses: xu-cheng/latex-action@v3
         with:
-          packages: >
-            scheme-full
-
-      - name: Install biber
-        run: sudo apt-get update && sudo apt-get install -y biber
-
-      - name: Build PDF with latexmk
-        working-directory: src
-        run: |
-          latexmk -pdf -interaction=nonstopmode main.tex
-          ls -lh main.pdf
+          root_file: src/main.tex
+          # Usa imagem com TeX Live Full (inclui biber)
+          docker_image: ghcr.io/xu-cheng/texlive-full:latest
+          latexmk_use_lualatex: false
+          # Se usar fontes/shell-escape em figuras TikZ, habilite:
+          # latexmk_shell_escape: true
 
       - name: Upload artifact (main.pdf)
         uses: actions/upload-artifact@v4

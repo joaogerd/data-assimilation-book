@@ -17,30 +17,24 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           lfs: true
 
-      - name: Setup TeX Live (full)
-        uses: teatimeguest/setup-texlive-action@v3
+      - name: Build PDF (latexmk + biber via texlive-full)
+        uses: xu-cheng/latex-action@v3
         with:
-          packages: >
-            scheme-full
-
-      - name: Install biber
-        run: sudo apt-get update && sudo apt-get install -y biber
-
-      - name: Build PDF
-        working-directory: src
-        run: latexmk -pdf -interaction=nonstopmode main.tex
+          root_file: src/main.tex
+          docker_image: ghcr.io/xu-cheng/texlive-full:latest
 
       - name: Prepare website
         run: |
-          mkdir -p ./public
-          cp src/main.pdf ./public/livro.pdf
-          cat > ./public/index.html <<'HTML'
+          mkdir -p public
+          cp src/main.pdf public/livro.pdf
+          cat > public/index.html <<'HTML'
           <!doctype html>
           <meta charset="utf-8">
           <title>Introdução à Assimilação de Dados</title>
@@ -49,10 +43,10 @@ jobs:
           <iframe src="livro.pdf" width="100%" height="800" style="border:1px solid #ccc"></iframe>
           HTML
 
-      - name: Upload artifact
+      - name: Upload artifact for Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          path: public
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4

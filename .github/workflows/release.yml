@@ -9,23 +9,18 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           lfs: true
 
-      - name: Setup TeX Live
-        uses: teatimeguest/setup-texlive-action@v3
+      - name: Build PDF (latexmk + biber via texlive-full)
+        uses: xu-cheng/latex-action@v3
         with:
-          packages: >
-            scheme-full
-
-      - name: Install biber
-        run: sudo apt-get update && sudo apt-get install -y biber
-
-      - name: Build PDF
-        working-directory: src
-        run: latexmk -pdf -interaction=nonstopmode main.tex
+          root_file: src/main.tex
+          docker_image: ghcr.io/xu-cheng/texlive-full:latest
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
