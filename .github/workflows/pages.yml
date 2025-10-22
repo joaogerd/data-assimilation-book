@@ -1,0 +1,59 @@
+name: Publish PDF to Pages
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup TeX Live (full)
+        uses: teatimeguest/setup-texlive-action@v3
+        with:
+          packages: >
+            scheme-full
+
+      - name: Install biber
+        run: sudo apt-get update && sudo apt-get install -y biber
+
+      - name: Build PDF
+        working-directory: src
+        run: latexmk -pdf -interaction=nonstopmode main.tex
+
+      - name: Prepare website
+        run: |
+          mkdir -p ./public
+          cp src/main.pdf ./public/livro.pdf
+          cat > ./public/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>Introdução à Assimilação de Dados</title>
+          <h1>Introdução à Assimilação de Dados</h1>
+          <p><a href="livro.pdf">Baixar PDF</a></p>
+          <iframe src="livro.pdf" width="100%" height="800" style="border:1px solid #ccc"></iframe>
+          HTML
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+
