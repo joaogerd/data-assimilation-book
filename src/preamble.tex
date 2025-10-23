@@ -25,12 +25,16 @@
 %----------------------------
 % Cores e hyperlinks
 %----------------------------
-\usepackage{xcolor}                     % cores
-% Paleta discreta
+\usepackage{xcolor}
 \definecolor{primary}{RGB}{20, 92, 160}     % azul científico
 \definecolor{secondary}{RGB}{0, 134, 114}   % verde água
 \definecolor{accent}{RGB}{180, 60, 60}      % vermelho suave
 \definecolor{textgray}{gray}{0.15}
+% cores adicionais harmônicas
+\definecolor{neutral}{gray}{0.25}           % cinza neutro
+\definecolor{violet}{RGB}{110, 75, 160}     % violeta acadêmico
+\definecolor{teal}{RGB}{30, 140, 140}       % verde-azulado elegante
+\definecolor{orange}{RGB}{230,140, 40}      % laranja para observações
 \color{textgray}
 
 \usepackage{hyperref}                   % hyperlinks no PDF
@@ -153,20 +157,64 @@
 }
 \lstset{style=code}
 
-%----------------------------
-% Caixas de destaque
-%----------------------------
+%======================================================
+% CAIXAS EDITORIAIS UNIFICADAS (tcolorbox)
+%======================================================
 \usepackage[most]{tcolorbox}
-\tcbset{enhanced, sharp corners=downhill, boxsep=3pt, arc=2pt}
-\newtcolorbox{destaque}[1][]{
-  colback=primary!3, colframe=primary!60!black, title={Destaque}, fonttitle=\bfseries, #1}
-\newtcolorbox{nota}[1][]{
-  colback=secondary!3, colframe=secondary!60!black, title={Nota}, fonttitle=\bfseries, #1}
-\newtcolorbox{alerta}[1][]{
-  colback=accent!5, colframe=accent!80!black, title={Atenção}, fonttitle=\bfseries, #1}
-\newtcolorbox{exemplo}[1][]{
-  colback=black!2, colframe=black!40, title={Exemplo}, fonttitle=\bfseries, #1}
+\usepackage{fontawesome5}
 
+\tcbset{
+  enhanced, sharp corners=downhill, arc=2pt, boxsep=3pt,
+  left=6pt, right=6pt, top=6pt, bottom=6pt, breakable
+}
+
+% =============== FABRICA DE CAIXAS (macro genérica) ===============
+% Uso: \MakeBoxEnv{nome}{Titulo}{corBase}{icone}
+\newcommand{\MakeBoxEnv}[4]{%
+  % #1 = nome do ambiente (sem acento), ex: definicao
+  % #2 = título (pode ter acento),    ex: Definição
+  % #3 = cor base,                    ex: primary
+  % #4 = ícone (fontawesome),         ex: \faBook
+  \newtcolorbox{#1}[1][]{
+    enhanced,
+    colback=#3!6,                   % fundo suave
+    colframe=#3!80!black,           % borda
+    colbacktitle=#3!80!black,       % barra superior
+    coltitle=white,                 % cor do título
+    title={#4\ \textbf{#2}},        % título + ícone
+    fonttitle=\bfseries\sffamily,   % estilo do título
+    left=6pt, right=6pt, top=6pt, bottom=6pt,
+    attach boxed title to top left={yshift=-2mm, xshift=2mm},
+    boxed title style={
+      sharp corners,
+      rounded corners=northwest,
+      rounded corners=northeast,
+      boxrule=0pt,
+      colframe=#3!80!black,
+      colback=#3!80!black,
+    },
+    drop shadow,                    % sombra leve
+    #1                              % opções extras
+  }%
+}
+
+% ================== CAIXAS EDITORIAIS ==================
+% já tens: definicao (mantém para coerência)
+\MakeBoxEnv{definicao}{Definição}{primary}{\faBook}
+
+% pedido: destaque, nota, alerta, exemplo
+\MakeBoxEnv{destaque}{Destaque}{primary}{\faHighlighter}
+\MakeBoxEnv{nota}{Nota}{secondary}{\faStickyNote}
+\MakeBoxEnv{alerta}{Atenção}{accent}{\faExclamationTriangle}
+\MakeBoxEnv{exemplo}{Exemplo}{neutral}{\faFlask}
+
+% extras úteis em livro
+\MakeBoxEnv{observacao}{Observação}{orange}{\faInfoCircle}
+\MakeBoxEnv{dica}{Dica}{teal}{\faLightbulb}
+\MakeBoxEnv{exercicio}{Exercício}{violet}{\faDumbbell}
+\MakeBoxEnv{prova}{Prova}{accent}{\faPenFancy} % para demonstrações matemáticas
+\MakeBoxEnv{comentario}{Comentário}{neutral}{\faCommentDots}
+\MakeBoxEnv{sintese}{Síntese}{violet}{\faProjectDiagram}
 %----------------------------
 % Teoremas e afins (pt-BR)
 %----------------------------

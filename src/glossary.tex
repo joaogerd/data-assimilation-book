@@ -91,6 +91,17 @@
   name={Background},
   description={Estimativa inicial (geralmente uma previsão de curto prazo) usada como ponto de partida na assimilação.}
 }
+\newglossaryentry{chute-inicial}{
+  name={Chute inicial},
+  description={Estimativa de curto prazo do estado atmosférico utilizada como ponto de partida no processo de assimilação de dados. 
+  Também chamada de \textit{first guess} ou \textit{background}, é obtida normalmente pela integração anterior do modelo numérico e representa a melhor estimativa disponível antes da incorporação das observações mais recentes.}
+}
+\newglossaryentry{blue}{
+  name={Melhor estimativa estatística (BLUE)},
+  description={Acrônimo de \textit{Best Linear Unbiased Estimator}, ou melhor estimador linear não-viesado. 
+  Representa a estimativa que minimiza a variância do erro entre o estado analisado e o verdadeiro, sob as hipóteses de linearidade, gaussianidade e não-viesamento dos erros. 
+  Constitui a base teórica da Interpolação Ótima e do Filtro de Kalman, formando o princípio estatístico fundamental da assimilação de dados.}
+}
 
 \newglossaryentry{forecast}{
   name={Previsão},
